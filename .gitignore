@@ -1,4 +1,4 @@
-target/
+ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -42,3 +42,7 @@ build/
 ### Project-specific ###
 .env
 *.log
+*.properties
+# Maven build output
+target/
+**/target/

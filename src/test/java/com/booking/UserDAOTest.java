@@ -1,4 +1,4 @@
-package com.booking.test;
+package com.booking;
 
 import com.booking.dao.UserDAO;
 import com.booking.model.User;
@@ -12,7 +12,7 @@ public class UserDAOTest {
         // READ
         System.out.println("---- READ USER ----");
 
-        User user = userDAO.getUserById(1);
+        User user = userDAO.getUserById(2L);
 
         if (user != null) {
             System.out.println("ID: " + user.getUserId());
