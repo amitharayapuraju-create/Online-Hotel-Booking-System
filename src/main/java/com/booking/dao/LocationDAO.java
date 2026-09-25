@@ -6,19 +6,50 @@ import com.booking.model.Location;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class LocationDAO {
 
+    // Logger
+    private static final Logger logger =
+            Logger.getLogger(LocationDAO.class.getName());
+
+    // SQL Statements
+    private static final String INSERT_LOCATION =
+            "INSERT INTO location (name, type, parent_id) " +
+                    "VALUES (?, ?, ?)";
+
+    private static final String SELECT_LOCATION_BY_ID =
+            "SELECT location_id, name, type, parent_id, " +
+                    "created_at, updated_at " +
+                    "FROM location " +
+                    "WHERE location_id = ?";
+
+    private static final String SELECT_ALL_LOCATIONS =
+            "SELECT location_id, name, type, parent_id, " +
+                    "created_at, updated_at " +
+                    "FROM location " +
+                    "ORDER BY location_id";
+
+    private static final String UPDATE_LOCATION =
+            "UPDATE location " +
+                    "SET name = ?, type = ?, parent_id = ? " +
+                    "WHERE location_id = ?";
+
+    private static final String DELETE_LOCATION =
+            "DELETE FROM location " +
+                    "WHERE location_id = ?";
+
+
+    // =========================
     // CREATE
+    // =========================
     public Long createLocation(Location location) {
-        String sql = """
-                INSERT INTO location (name, type, parent_id)
-                VALUES (?, ?, ?)
-                """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     sql, Statement.RETURN_GENERATED_KEYS)) {
+                     INSERT_LOCATION,
+                     Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, location.getName());
             stmt.setString(2, location.getType());
@@ -30,35 +61,43 @@ public class LocationDAO {
             }
 
             int rows = stmt.executeUpdate();
+
             if (rows > 0) {
+
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
+
                     if (rs.next()) {
+
                         Long generatedId = rs.getLong(1);
-                        location.setLocationId(rs.getLong(1));
+
+                        location.setLocationId(generatedId);
+
+                        logger.info("Location created successfully");
+
                         return generatedId;
                     }
                 }
             }
-            return null;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            logger.severe(
+                    "Error creating location: " + e.getMessage()
+            );
         }
+
         return null;
     }
 
-    // READ BY ID
+
+    // =========================
+    // READ - GET BY ID
+    // =========================
     public Location getLocationById(Long locationId) {
 
-        String sql = """
-                SELECT location_id, name, type, parent_id,
-                       created_at, updated_at
-                FROM location
-                WHERE location_id = ?
-                """;
-
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt =
+                     conn.prepareStatement(SELECT_LOCATION_BY_ID)) {
 
             stmt.setLong(1, locationId);
 
@@ -68,11 +107,20 @@ public class LocationDAO {
 
                     Location location = new Location();
 
-                    location.setLocationId(rs.getLong("location_id"));
-                    location.setName(rs.getString("name"));
-                    location.setType(rs.getString("type"));
+                    location.setLocationId(
+                            rs.getLong("location_id")
+                    );
 
-                    long parentId = rs.getLong("parent_id");
+                    location.setName(
+                            rs.getString("name")
+                    );
+
+                    location.setType(
+                            rs.getString("type")
+                    );
+
+                    long parentId =
+                            rs.getLong("parent_id");
 
                     if (rs.wasNull()) {
                         location.setParentId(null);
@@ -80,55 +128,73 @@ public class LocationDAO {
                         location.setParentId(parentId);
                     }
 
-                    Timestamp createdAt = rs.getTimestamp("created_at");
-                    Timestamp updatedAt = rs.getTimestamp("updated_at");
+                    Timestamp createdAt =
+                            rs.getTimestamp("created_at");
+
+                    Timestamp updatedAt =
+                            rs.getTimestamp("updated_at");
 
                     if (createdAt != null) {
                         location.setCreatedAt(
-                                createdAt.toLocalDateTime());
+                                createdAt.toLocalDateTime()
+                        );
                     }
 
                     if (updatedAt != null) {
                         location.setUpdatedAt(
-                                updatedAt.toLocalDateTime());
+                                updatedAt.toLocalDateTime()
+                        );
                     }
+
+                    logger.info(
+                            "Location fetched successfully"
+                    );
 
                     return location;
                 }
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            logger.severe(
+                    "Error fetching location: " + e.getMessage()
+            );
         }
 
         return null;
     }
 
-    // READ ALL
+
+    // =========================
+    // READ - GET ALL
+    // =========================
     public List<Location> getAllLocations() {
 
         List<Location> locations = new ArrayList<>();
 
-        String sql = """
-                SELECT location_id, name, type, parent_id,
-                       created_at, updated_at
-                FROM location
-                ORDER BY location_id
-                """;
-
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt =
+                     conn.prepareStatement(SELECT_ALL_LOCATIONS);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
 
                 Location location = new Location();
 
-                location.setLocationId(rs.getLong("location_id"));
-                location.setName(rs.getString("name"));
-                location.setType(rs.getString("type"));
+                location.setLocationId(
+                        rs.getLong("location_id")
+                );
 
-                long parentId = rs.getLong("parent_id");
+                location.setName(
+                        rs.getString("name")
+                );
+
+                location.setType(
+                        rs.getString("type")
+                );
+
+                long parentId =
+                        rs.getLong("parent_id");
 
                 if (rs.wasNull()) {
                     location.setParentId(null);
@@ -136,42 +202,53 @@ public class LocationDAO {
                     location.setParentId(parentId);
                 }
 
-                Timestamp createdAt = rs.getTimestamp("created_at");
-                Timestamp updatedAt = rs.getTimestamp("updated_at");
+                Timestamp createdAt =
+                        rs.getTimestamp("created_at");
+
+                Timestamp updatedAt =
+                        rs.getTimestamp("updated_at");
 
                 if (createdAt != null) {
                     location.setCreatedAt(
-                            createdAt.toLocalDateTime());
+                            createdAt.toLocalDateTime()
+                    );
                 }
 
                 if (updatedAt != null) {
                     location.setUpdatedAt(
-                            updatedAt.toLocalDateTime());
+                            updatedAt.toLocalDateTime()
+                    );
                 }
 
                 locations.add(location);
             }
 
+            logger.info(
+                    "All locations fetched successfully"
+            );
+
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            logger.severe(
+                    "Error fetching locations: " + e.getMessage()
+            );
         }
 
         return locations;
     }
 
+
+    // =========================
     // UPDATE
+    // =========================
     public boolean updateLocation(Location location) {
 
-        String sql = """
-                UPDATE location
-                SET name = ?, type = ?, parent_id = ?
-                WHERE location_id = ?
-                """;
-
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt =
+                     conn.prepareStatement(UPDATE_LOCATION)) {
 
             stmt.setString(1, location.getName());
+
             stmt.setString(2, location.getType());
 
             if (location.getParentId() != null) {
@@ -180,34 +257,60 @@ public class LocationDAO {
                 stmt.setNull(3, Types.BIGINT);
             }
 
-            stmt.setLong(4, location.getLocationId());
+            stmt.setLong(
+                    4,
+                    location.getLocationId()
+            );
 
-            return stmt.executeUpdate() > 0;
+            int rows = stmt.executeUpdate();
+
+            if (rows > 0) {
+
+                logger.info(
+                        "Location updated successfully"
+                );
+
+                return true;
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            logger.severe(
+                    "Error updating location: " + e.getMessage()
+            );
         }
 
         return false;
     }
 
+
+    // =========================
     // DELETE
+    // =========================
     public boolean deleteLocation(Long locationId) {
 
-        String sql = """
-                DELETE FROM location
-                WHERE location_id = ?
-                """;
-
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt =
+                     conn.prepareStatement(DELETE_LOCATION)) {
 
             stmt.setLong(1, locationId);
 
-            return stmt.executeUpdate() > 0;
+            int rows = stmt.executeUpdate();
+
+            if (rows > 0) {
+
+                logger.info(
+                        "Location deleted successfully"
+                );
+
+                return true;
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            logger.severe(
+                    "Error deleting location: " + e.getMessage()
+            );
         }
 
         return false;
