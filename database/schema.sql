@@ -95,3 +95,77 @@ USE hotel_booking_system;
 SELECT * FROM user;
 USE hotel_booking_system;
 SELECT * FROM user;
+
+USE hotel_booking_system;
+
+SELECT hotel_id, name
+FROM hotel;
+SELECT hotel_id, name FROM hotel;
+
+USE hotel_booking_system;
+
+INSERT INTO hotel
+(location_id, name, description, address, star_rating, amenities, status)
+VALUES
+(1,
+ 'Test Hotel',
+ 'Test hotel for Room DAO',
+ 'Hyderabad',
+ 5.0,
+ 'WiFi, Parking',
+ 'ACTIVE');
+ 
+ SELECT hotel_id, location_id, name
+FROM hotel;
+
+USE hotel_booking_system;
+
+SELECT user_id, username, email
+FROM user;
+
+SELECT hotel_id, name
+FROM hotel;
+
+SELECT room_id, hotel_id, room_number, room_type
+FROM room;
+
+USE hotel_booking_system;
+
+DESCRIBE user;
+SELECT * FROM user;
+
+USE hotel_booking_system;
+
+INSERT INTO user
+(full_name, email, password_hash, phone, role, status)
+VALUES
+('Booking Test User',
+ 'bookingtest@gmail.com',
+ 'test_password_hash',
+ '9876543210',
+ 'CUSTOMER',
+ 'ACTIVE');
+ 
+ SELECT user_id, full_name, email, role, status
+FROM user;
+SELECT room_id, hotel_id, room_number, room_type, capacity, base_price, status
+FROM room;
+USE hotel_booking_system;
+
+INSERT INTO room
+(hotel_id, room_number, room_type, capacity, base_price, status)
+VALUES
+(2, '101', 'DELUXE', 2, 250.00, 'AVAILABLE');
+
+SELECT room_id, hotel_id, room_number, room_type,
+       capacity, base_price, status
+FROM room;
+SELECT hotel_id, name
+FROM hotel;
+
+USE hotel_booking_system;
+
+SELECT * FROM booking;
+SELECT *FROM hotel;
+SELECT *FROM room;
+
