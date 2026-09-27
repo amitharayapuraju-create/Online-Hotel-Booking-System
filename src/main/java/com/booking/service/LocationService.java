@@ -80,7 +80,7 @@ public class LocationService {
 
     public boolean updateLocation(Location location) {
 
-        if (location == null || location.getLocationId() == null) {
+        if (location == null || location.getLocationId() == null || location.getLocationId() <= 0 ) {
             logger.error("Invalid location for update");
             return false;
         }

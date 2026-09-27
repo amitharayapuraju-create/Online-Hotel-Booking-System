@@ -79,7 +79,7 @@ public class HotelService {
 
     public boolean updateHotel(Hotel hotel) {
 
-        if (hotel == null || hotel.getHotelId() == null) {
+        if (hotel == null || hotel.getHotelId() == null || hotel.getHotelId() <= 0) {
             logger.error("Invalid hotel for update");
             return false;
         }
