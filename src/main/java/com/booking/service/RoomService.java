@@ -79,7 +79,7 @@ public class RoomService {
 
     public boolean updateRoom(Room room) {
 
-        if (room == null || room.getRoomId() == null) {
+        if (room == null || room.getRoomId() == null|| room.getRoomId() <= 0 ) {
             logger.error("Invalid room for update");
             return false;
         }

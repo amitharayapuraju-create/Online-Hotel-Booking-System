@@ -291,33 +291,59 @@ public class RoomDAO {
 
         Room room = new Room();
 
+        // ================= ROOM ID =================
+
         room.setRoomId(
                 rs.getLong("room_id")
         );
 
-        room.setHotelId(
-                rs.getLong("hotel_id")
-        );
+        // ================= HOTEL ID =================
+
+        long hotelId =
+                rs.getLong("hotel_id");
+
+        if (rs.wasNull()) {
+            room.setHotelId(null);
+        } else {
+            room.setHotelId(hotelId);
+        }
+
+        // ================= ROOM NUMBER =================
 
         room.setRoomNumber(
                 rs.getString("room_number")
         );
 
+        // ================= ROOM TYPE =================
+
         room.setRoomType(
                 rs.getString("room_type")
         );
 
-        room.setCapacity(
-                rs.getInt("capacity")
-        );
+        // ================= CAPACITY =================
+
+        int capacity =
+                rs.getInt("capacity");
+
+        if (rs.wasNull()) {
+            room.setCapacity(null);
+        } else {
+            room.setCapacity(capacity);
+        }
+
+        // ================= BASE PRICE =================
 
         room.setBasePrice(
                 rs.getBigDecimal("base_price")
         );
 
+        // ================= STATUS =================
+
         room.setStatus(
                 rs.getString("status")
         );
+
+        // ================= CREATED AT =================
 
         Timestamp createdAt =
                 rs.getTimestamp("created_at");
@@ -327,6 +353,8 @@ public class RoomDAO {
                     createdAt.toLocalDateTime()
             );
         }
+
+        // ================= UPDATED AT =================
 
         Timestamp updatedAt =
                 rs.getTimestamp("updated_at");
