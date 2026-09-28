@@ -117,6 +117,12 @@ VALUES
  
  SELECT hotel_id, location_id, name
 FROM hotel;
+SELECT * FROM user;
+SELECT * FROM hotel;
+SELECT * FROM room;
+
+SELECT booking_id, user_id, hotel_id, room_id
+FROM booking;
 
 USE hotel_booking_system;
 
@@ -168,4 +174,25 @@ USE hotel_booking_system;
 SELECT * FROM booking;
 SELECT *FROM hotel;
 SELECT *FROM room;
+SELECT booking_id, user_id, hotel_id, room_id
+FROM booking;
+
+USE hotel_booking_system;
+SELECT user_id, email
+FROM user;
+USE hotel_booking_system;
+DESCRIBE booking;
+
+USE hotel_booking_system;
+
+SELECT room_id, hotel_id, room_number, room_type, capacity, base_price, status
+FROM room;
+SELECT * FROM booking;
+
+USE hotel_booking_system;
+
+INSERT INTO booking
+(user_id, hotel_id, room_id, check_in_date, check_out_date, guests, total_amount, booking_status)
+VALUES
+(3, 2, 4, '2026-10-01', '2026-10-03', 2, 500.00, 'CONFIRMED');
 

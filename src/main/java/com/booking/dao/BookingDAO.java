@@ -310,4 +310,45 @@ public class BookingDAO {
 
         return false;
     }
+    // =========================================================
+    // CHECK OVERLAPPING BOOKING
+    // =========================================================
+
+    public boolean hasOverlappingBooking(Long roomId,
+                                         java.time.LocalDate checkInDate,
+                                         java.time.LocalDate checkOutDate) {
+
+        String sql = """
+                SELECT COUNT(*)
+                FROM booking
+                WHERE room_id = ?
+                  AND booking_status = 'CONFIRMED'
+                  AND check_in_date < ?
+                  AND check_out_date > ?
+                """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, roomId);
+            stmt.setDate(2, Date.valueOf(checkOutDate));
+            stmt.setDate(3, Date.valueOf(checkInDate));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error checking overlapping booking: "
+                            + e.getMessage()
+            );
+        }
+
+        return false;
+    }
 }
